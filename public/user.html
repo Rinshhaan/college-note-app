@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teacher Notes App</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Teacher Notes</h1>
+        </header>
+
+
+        <section>
+            <h2>Existing Notes</h2>
+            <div id="notesList"></div>
+        </section>
+    </div>
+
+    <script>
+        // Get notes and display
+        const fetchNotes = async () => {
+            const response = await fetch('http://localhost:3000/api/notes');
+            const notes = await response.json();
+            const notesList = document.getElementById('notesList');
+            notesList.innerHTML = '';
+            notes.forEach(note => {
+                const noteElement = document.createElement('div');
+                noteElement.classList.add('note');
+                noteElement.innerHTML = `
+                    <h3>${note.subject}</h3>
+                    <p><strong>Note:</strong> ${note.note}</p>
+                    <p><strong>Sub Note:</strong> ${note.subNote || 'N/A'}</p>
+                    <a href="${note.filePath}" target="_blank" class="btn">View PDF</a>
+                `;
+                notesList.appendChild(noteElement);
+            });
+        };
+
+        // Form submit handler
+        document.getElementById('uploadForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const formData = new FormData();
+            formData.append('subject', document.getElementById('subject').value);
+            formData.append('note', document.getElementById('note').value);
+            formData.append('subNote', document.getElementById('subNote').value);
+            formData.append('file', document.getElementById('file').files[0]);
+
+            const response = await fetch('http://localhost:3000/api/notes', {
+                method: 'POST',
+                body: formData
+            });
+
+            if (response.ok) {
+                alert('Note uploaded successfully');
+                fetchNotes();
+            } else {
+                alert('Error uploading the note');
+            }
+        });
+
+        // Initial load of notes
+        fetchNotes();
+    </script>
+</body>
+</html>

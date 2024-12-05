@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teacher/Student Dashboard</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <h1>Teacher/Student Dashboard</h1>
+    </header>
+
+    <form id="uploadForm" enctype="multipart/form-data">
+        <div class="form-group">
+            <label for="subject">Subject:</label>
+            <input type="text" id="subject" name="subject" required>
+        </div>
+        <div class="form-group">
+            <label for="note">Note:</label>
+            <input type="text" id="note" name="note" required>
+        </div>
+        <div class="form-group">
+            <label for="subNote">Sub Note:</label>
+            <input type="text" id="subNote" name="subNote">
+        </div>
+        <div class="form-group">
+            <label for="file">Upload PDF:</label>
+            <input type="file" id="file" name="file" accept="application/pdf" required>
+        </div>
+        <button type="submit">Upload Note</button>
+    </form>
+
+    <section>
+        <h2>Existing Notes</h2>
+        <div id="notesList"></div>
+    </section>
+
+    <script>
+        // Fetch notes for user (view by subject)
+        const fetchNotes = async () => {
+            const subject = "Math"; // Example subject, dynamic based on teacher's subject
+            const response = await fetch(`http://localhost:3000/api/notes/${subject}`);
+            const notes = await response.json();
+            const notesList = document.getElementById('notesList');
+            notesList.innerHTML = '';
+            notes.forEach(note => {
+                const noteElement = document.createElement('div');
+                noteElement.classList.add('note');
+                noteElement.innerHTML = `
+                    <h3>${note.subject}</h3>
+                    <p><strong>Note:</strong> ${note.note}</p>
+                    <p><strong>Sub Note:</strong> ${note.subNote || 'N/A'}</p>
+                    <a href="${note.filePath}" target="_blank" class="btn">View PDF</a>
+                `;
+                notesList.appendChild(noteElement);
+            });
+        };
+
+        // Initial load of notes
+        fetchNotes();
+    </script>
+</body>
+</html>
