@@ -56,7 +56,11 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 // Admin Routes (CRUD operations)
 app.get('/index', mockAuthMiddleware, (req, res) => {
     console.log('Role in /admin route:', req.user.role); // Log the role being checked
+<<<<<<< HEAD
     if (req.user.role === 'index') {
+=======
+    if (req.user.role === 'admin') {
+>>>>>>> d6fb1f84550a129be48eff488e58e5ff065dd008
         res.sendFile(path.join(__dirname, 'public', 'index.html'));
     } else {
         res.status(403).send('Access denied');
